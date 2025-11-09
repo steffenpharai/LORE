@@ -2,10 +2,11 @@
 
 ## Project Linked
 
-- **Project Name**: `lorebase/web`
-- **Project ID**: `prj_4oY1DFWsRgU2i4Q8xrrPhWZoNz2U`
+- **Project Name**: `lorebase/lore`
+- **Project ID**: `prj_AXLMonVcX82iZVKrNrLrxnIlOgex`
 - **Organization**: `team_Rhs9CaYpWahAZabTQf3BdYuk`
 - **Linked Directory**: `apps/web`
+- **Project URL**: https://vercel.com/lorebase/lore
 
 ## Next Steps
 
@@ -52,11 +53,12 @@ Or set up a migration script in Vercel's build command.
 
 ## Current Status
 
-✅ Project linked to Vercel
+✅ Project linked to Vercel (`lorebase/lore`)
 ✅ Build passes locally
 ✅ All dependencies installed
 ✅ Prisma client generated
-⚠️ Environment variables need to be added in Vercel dashboard
+✅ Environment variables configured in Vercel dashboard
+✅ Successfully deployed to preview: https://lore-2dx87xqdz-lorebase.vercel.app
 
 ## Vercel Project Settings
 
