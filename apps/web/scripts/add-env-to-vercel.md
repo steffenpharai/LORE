@@ -1,21 +1,31 @@
 # Add Environment Variables to Vercel
 
-Since `.env.local` is gitignored, you need to manually add environment variables to Vercel.
+Since `.env.local` is gitignored, you need to add environment variables to Vercel.
 
-## Option 1: Vercel Dashboard (Recommended)
+## Option 1: PowerShell Script (Recommended)
+
+Run the automated script from `apps/web` directory:
+
+```powershell
+.\scripts\add-env-to-vercel.ps1
+```
+
+This reads `.env.local` and adds all variables to Vercel for all environments.
+
+## Option 2: Vercel Dashboard
 
 1. Go to: https://vercel.com/lorebase/lore/settings/environment-variables
 2. Click "Add New" for each variable
 3. Add variables for all environments (Production, Preview, Development)
 
-## Option 2: Vercel CLI (Interactive)
+## Option 3: Vercel CLI (Manual)
 
 Run this for each variable:
 
 ```bash
-npx vercel env add <VARIABLE_NAME> production
-npx vercel env add <VARIABLE_NAME> preview  
-npx vercel env add <VARIABLE_NAME> development
+echo "value" | npx vercel env add <VARIABLE_NAME> production
+echo "value" | npx vercel env add <VARIABLE_NAME> preview  
+echo "value" | npx vercel env add <VARIABLE_NAME> development
 ```
 
 ## Required Variables
