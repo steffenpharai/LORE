@@ -20,8 +20,8 @@ LORE MACHINE is built with a **frame-first** approach, ensuring every interactio
 - **UI Components**: shadcn/ui + Radix UI
 - **Icons**: Lucide React
 - **Fonts**: Inter (body) + Space Grotesk (headings)
-- **Onchain**: OnchainKit, wagmi, viem
-- **Database**: Prisma + PostgreSQL
+- **Onchain**: OnchainKit v1.1.2, wagmi v2.19.2, viem v2.38.6
+- **Database**: Prisma v6.19.0 + PostgreSQL
 - **Queueing**: BullMQ + Redis
 - **Notifications**: Neynar
 - **Hosting**: Vercel

@@ -24,12 +24,25 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
   const handleAddFrame = useCallback(async () => {
     try {
       const result = await addFrame();
-      if (result) {
-        return result;
+      // Handle case where result might be undefined or have different structure
+      if (result && typeof result === 'object') {
+        // Check if result has expected properties
+        if ('url' in result && 'token' in result) {
+          return result as { url: string; token: string };
+        }
+        // Handle case where result might be wrapped in a result property
+        const resultObj = result as Record<string, unknown>;
+        if ('result' in resultObj && resultObj.result && typeof resultObj.result === 'object') {
+          const innerResult = resultObj.result as Record<string, unknown>;
+          if ('url' in innerResult && 'token' in innerResult) {
+            return innerResult as { url: string; token: string };
+          }
+        }
       }
       return null;
     } catch (error) {
       console.error('[error] adding frame', error);
+      // Don't throw, just return null to prevent breaking the app
       return null;
     }
   }, [addFrame]);
@@ -44,7 +57,10 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // when the frame is ready, if the frame is not added, prompt the user to add the frame
     if (isFrameReady && !context?.client?.added) {
-      handleAddFrame();
+      handleAddFrame().catch((err) => {
+        // Silently handle errors to prevent unhandled promise rejections
+        console.debug('Frame add attempt failed:', err);
+      });
     }
   }, [context?.client?.added, handleAddFrame, isFrameReady]);
 

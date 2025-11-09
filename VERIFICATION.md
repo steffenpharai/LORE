@@ -12,11 +12,10 @@
   - Webhook URL configured
 
 ### 2. Quick Auth (FID-based JWT)
-- ⚠️ **Status**: Custom Implementation (Needs Base Quick Auth)
-- **Current**: Custom JWT with FID in payload
-- **Required**: Should use Farcaster's Quick Auth signed identity requests
-- **Location**: `apps/web/lib/auth.ts`, `apps/web/app/api/auth/verify/route.ts`
-- **Action Needed**: Integrate `@farcaster/miniapp-sdk` Quick Auth properly
+- ✅ **Status**: Integrated via OnchainKit 1.1.2
+- **Current**: Using OnchainKit's `useAuthenticate` hook with `@farcaster/miniapp-sdk` v0.2.1
+- **Location**: `apps/web/hooks/use-sign-in.ts`, `apps/web/app/api/auth/verify/route.ts`
+- **Note**: OnchainKit 1.1.2 now uses `@farcaster/miniapp-sdk` internally (deprecated `@farcaster/frame-sdk` removed)
 
 ### 3. Client-Agnostic Copy
 - ⚠️ **Status**: Needs Verification
@@ -39,17 +38,20 @@
   - Free tier rate limit handling (user removed, but structure exists)
 
 ### 6. OnchainKit Integration
-- ⚠️ **Status**: Dependency Added, Not Used
-- **Package**: `@coinbase/onchainkit` in package.json
-- **Action Needed**: Integrate OnchainKit components for wallet connections and on-chain interactions
+- ✅ **Status**: Fully Integrated (v1.1.2)
+- **Package**: `@coinbase/onchainkit` v1.1.2 in package.json
+- **Details**: 
+  - MiniKitProvider configured in `apps/web/app/providers.tsx`
+  - Uses `@farcaster/miniapp-sdk` v0.2.1 (no deprecated frame-sdk)
+  - Authentication hooks integrated via `useAuthenticate` and `useMiniKit`
 
 ### 7. Dependencies Verification
 
 #### Required Dependencies
-- ✅ `@farcaster/miniapp-sdk` - Added to package.json
-- ✅ `@coinbase/onchainkit` - Added to package.json  
-- ✅ `wagmi` - Added to package.json
-- ✅ `viem` - Added to package.json
+- ✅ `@farcaster/miniapp-sdk` v0.2.1 - Added to package.json (latest)
+- ✅ `@coinbase/onchainkit` v1.1.2 - Added to package.json (latest)
+- ✅ `wagmi` v2.19.2 - Added to package.json (latest)
+- ✅ `viem` v2.38.6 - Added to package.json (latest)
 - ✅ `neynar` - Added to package.json
 
 #### Missing Integrations
