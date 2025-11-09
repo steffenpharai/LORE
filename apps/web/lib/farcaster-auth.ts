@@ -2,7 +2,7 @@ import { verifyMessage } from 'viem';
 import { fetchUser, type NeynarUser } from './neynar';
 
 /**
- * Verify Farcaster signature using OnchainKit's authentication pattern
+ * Verify Base app signature using OnchainKit's authentication pattern
  * This matches the Base MiniKit starter implementation
  */
 export async function verifyFarcasterSignature(
@@ -30,7 +30,7 @@ export async function verifyFarcasterSignature(
 
     return user;
   } catch (error) {
-    console.error('Failed to verify Farcaster signature:', error);
+    console.error('Failed to verify Base app signature:', error);
     return null;
   }
 }

@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
               select: {
                 fid: true,
                 username: true,
+                customAvatarUrl: true,
               },
             },
           },
@@ -29,7 +30,33 @@ export async function GET(request: NextRequest) {
       skip: offset,
     });
 
-    return NextResponse.json({ stories });
+    // Calculate contributor counts and unique contributors
+    const storiesWithContributors = stories.map((story) => {
+      const contributorFids = new Set<number>();
+      story.lines.forEach((line) => {
+        contributorFids.add(line.author.fid);
+      });
+
+      return {
+        ...story,
+        contributorCount: contributorFids.size,
+        contributors: Array.from(contributorFids).map((fid) => ({
+          fid,
+          username: story.lines.find((l) => l.author.fid === fid)?.author.username || null,
+        })),
+        lines: story.lines.map((line) => ({
+          ...line,
+          author: {
+            fid: line.author.fid,
+            username: line.author.username,
+            // Note: pfp_url comes from Base app context, not database
+            // Will be populated on client side from Base context
+          },
+        })),
+      };
+    });
+
+    return NextResponse.json({ stories: storiesWithContributors });
   } catch (error) {
     console.error('Stories error:', error);
     return NextResponse.json(

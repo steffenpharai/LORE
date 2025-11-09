@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { claims, chainId = 8453 } = body; // Default to Base mainnet
+    const { claims, chainId = 84532 } = body; // Default to Base Sepolia (testnet)
 
     if (!Array.isArray(claims) || claims.length === 0) {
       return NextResponse.json(

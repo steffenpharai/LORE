@@ -17,7 +17,7 @@ vercel --prod
 - Redis instance
 - GitHub account (for repository)
 - Vercel account
-- Base Sepolia/Mainnet RPC access
+- Base Sepolia RPC access (for testing - Chain ID: 84532)
 - Neynar API key
 
 ## 🏗️ Architecture
@@ -57,7 +57,8 @@ Required variables:
 - `REDIS_URL` - Redis connection string
 - `NEYNAR_API_KEY` - Neynar API key for Farcaster integration
 - `JWT_SECRET` - Secret for JWT token signing
-- `ALCHEMY_BASE_RPC` - Base network RPC URL
+- `ALCHEMY_BASE_RPC` - Base Sepolia RPC URL (for testing - Chain ID: 84532)
+- `NEXT_PUBLIC_BASE_ENV` - Set to `staging` for Base Sepolia, `prod` for Base Mainnet
 
 ### 3. Database Setup
 
@@ -67,7 +68,7 @@ npx prisma generate
 npx prisma migrate dev --name init
 ```
 
-### 4. Deploy Contracts (Optional)
+### 4. Deploy Contracts to Base Sepolia (Testing)
 
 ```bash
 cd contracts
@@ -75,6 +76,10 @@ forge install foundry-rs/forge-std
 forge install OpenZeppelin/openzeppelin-contracts
 forge build
 forge test
+
+# Deploy to Base Sepolia (testnet)
+# Make sure ALCHEMY_BASE_RPC is set to Base Sepolia endpoint
+pnpm run deploy:sepolia
 ```
 
 ## 🎯 Features

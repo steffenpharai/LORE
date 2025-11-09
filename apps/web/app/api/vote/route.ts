@@ -100,6 +100,46 @@ export async function POST(request: NextRequest) {
         where: { id: line.authorId },
         data: { lorePoints: { increment: amount } },
       });
+
+      // Trigger viral exit cast for the author
+      try {
+        const author = await prisma.user.findUnique({
+          where: { id: line.authorId },
+          select: { fid: true, username: true },
+        });
+
+        if (author) {
+          const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL 
+            ? `https://${process.env.VERCEL_URL}` 
+            : 'http://localhost:3000';
+          const storyUrl = `${baseUrl}/story/${line.storyId}`;
+          const ogImageUrl = `${baseUrl}/api/og?storyId=${line.storyId}&lineId=${lineId}&authorName=${encodeURIComponent(author.username || `user ${author.fid}`)}`;
+
+          const castText = `I just became an Author of crypto history on LORE MACHINE! 🎉
+
+Check out my contribution: ${storyUrl}
+
+Built on @base 🟦`;
+
+          // Trigger cast asynchronously (don't wait for it)
+          fetch(`${baseUrl}/api/notifications/cast`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: castText,
+              embeds: [{ url: ogImageUrl }],
+              authorFid: author.fid,
+            }),
+          }).catch((err) => {
+            console.error('Failed to trigger viral exit cast:', err);
+          });
+        }
+      } catch (castError) {
+        console.error('Error triggering viral exit cast:', castError);
+        // Don't fail the vote if cast fails
+      }
     }
 
     return NextResponse.json({

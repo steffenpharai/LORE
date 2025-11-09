@@ -15,6 +15,14 @@ model User {
   fid       Int      @unique
   username  String?
   lorePoints Int     @default(0)
+  // Profile customization (Identity Playgrounds)
+  bio       String?
+  theme     String?  // Theme preference (e.g., "base-blue", "farcaster-purple", "custom")
+  customAvatarUrl String?
+  // Streak tracking (Long-Term Rituals)
+  currentStreak Int  @default(0)
+  longestStreak Int  @default(0)
+  lastSubmissionDate DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -22,6 +30,7 @@ model User {
   votes         Vote[]
   claims        Claim[]
   shares        StoryShare[]
+  challengeSubmissions ChallengeSubmission[]
 
   @@index([fid])
 }
@@ -56,6 +65,7 @@ model StoryLine {
   updatedAt   DateTime @updatedAt
 
   votes       Vote[]
+  challengeSubmissions ChallengeSubmission[]
 
   @@unique([storyId, lineNumber])
   @@index([storyId, isApproved])
@@ -101,5 +111,46 @@ model StoryShare {
 
   @@unique([storyId, userId])
   @@index([storyId])
+}
+
+// Long-Term Rituals: Weekly Challenges
+model WeeklyChallenge {
+  id          String   @id @default(cuid())
+  theme       String
+  prompt      String
+  startDate   DateTime
+  endDate     DateTime
+  winnerFid   Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submissions ChallengeSubmission[]
+
+  @@index([endDate])
+}
+
+model ChallengeSubmission {
+  id          String   @id @default(cuid())
+  challengeId String
+  challenge   WeeklyChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  lineId      String
+  line        StoryLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([challengeId, userId])
+  @@index([challengeId])
+}
+
+// Long-Term Rituals: Daily Prompts
+model DailyPrompt {
+  id              String   @id @default(cuid())
+  prompt          String
+  date            DateTime  @unique
+  submissionCount Int       @default(0)
+  createdAt       DateTime  @default(now())
+
+  @@index([date])
 }
 

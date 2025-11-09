@@ -95,12 +95,76 @@ export async function POST(request: NextRequest) {
       data: { lineCount: nextLineNumber },
     });
 
+    // Update streak tracking (Long-Term Rituals)
+    const now = new Date();
+    const lastSubmission = user.lastSubmissionDate;
+    let newStreak = user.currentStreak;
+    let newLongestStreak = user.longestStreak;
+
+    if (lastSubmission) {
+      const lastDate = new Date(lastSubmission);
+      lastDate.setHours(0, 0, 0, 0);
+      const today = new Date(now);
+      today.setHours(0, 0, 0, 0);
+      
+      const daysDiff = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysDiff === 1) {
+        // Consecutive day - increment streak
+        newStreak = user.currentStreak + 1;
+        if (newStreak > user.longestStreak) {
+          newLongestStreak = newStreak;
+        }
+      } else if (daysDiff > 1) {
+        // Streak broken - reset to 1
+        newStreak = 1;
+      } else if (daysDiff === 0) {
+        // Same day - keep streak
+        newStreak = user.currentStreak;
+      }
+    } else {
+      // First submission
+      newStreak = 1;
+      if (newStreak > user.longestStreak) {
+        newLongestStreak = newStreak;
+      }
+    }
+
+    // Update user streak
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        currentStreak: newStreak,
+        longestStreak: newLongestStreak,
+        lastSubmissionDate: now,
+      },
+    });
+
+    // Update daily prompt submission count
+    const todayForPrompt = new Date(now);
+    todayForPrompt.setHours(0, 0, 0, 0);
+    await prisma.dailyPrompt.upsert({
+      where: { date: todayForPrompt },
+      update: {
+        submissionCount: { increment: 1 },
+      },
+      create: {
+        date: todayForPrompt,
+        prompt: "Write the next line of crypto history.", // Default prompt
+        submissionCount: 1,
+      },
+    });
+
     return NextResponse.json({
       line: {
         id: line.id,
         content: line.content,
         lineNumber: line.lineNumber,
         storyId: story.id,
+      },
+      streak: {
+        current: newStreak,
+        longest: newLongestStreak,
       },
     });
   } catch (error) {
