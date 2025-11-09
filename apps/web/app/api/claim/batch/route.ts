@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthFromRequest } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { paymaster } from '@/lib/paymaster';
-import { type Address, type Hex } from 'viem';
 
 /**
  * Batch claim endpoint with Base Paymaster gas sponsorship

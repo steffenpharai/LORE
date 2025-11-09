@@ -17,7 +17,7 @@ export function verifyToken(token: string): AuthPayload | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as unknown;
     return AuthPayloadSchema.parse(decoded);
-  } catch (error) {
+  } catch {
     return null;
   }
 }

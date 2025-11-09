@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyMessage } from 'viem';
 
 export const POST = async (req: NextRequest) => {
-  let { fid, signature, message } = await req.json();
+  const { fid, signature, message } = await req.json();
   const user = await fetchUser(fid);
 
   // Verify signature matches custody address

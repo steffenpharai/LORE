@@ -33,7 +33,7 @@ export const useSignIn = ({ autoSignIn = false }: { autoSignIn?: boolean }) => {
       }
       referrerFid =
         context.location?.type === 'cast_embed'
-          ? (context.location.cast as any).fid || null
+          ? (context.location.cast as { fid?: string | number }).fid?.toString() || null
           : null;
 
       const res = await fetch('/api/auth/sign-in', {
