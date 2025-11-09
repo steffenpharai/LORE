@@ -15,17 +15,17 @@
     "splashImageUrl": "https://lore-base.vercel.app/splash.png",
     "splashBackgroundColor": "#000000",
     "webhookUrl": "https://lore-base.vercel.app/api/webhook",
-    "subtitle": "Decentralized Collaborative Lore Generator",
-    "description": "Transform meme momentum into canonical community IP. Submit one line of lore, vote with $LORE points, and earn rewards when your line becomes canon. Stories become fractionalized NFTs on Base.",
+    "subtitle": "Collaborative Lore Generator",
+    "description": "Transform meme momentum into canonical community IP. Submit one line of lore, vote with LORE points, and earn rewards when your line becomes canon. Stories become fractionalized NFTs on Base.",
     "screenshotUrls": [
       "https://lore-base.vercel.app/screenshot.png"
     ],
     "primaryCategory": "social",
-    "tags": ["social", "storytelling", "collaborative", "onchain", "nft", "base"],
+    "tags": ["social", "storytelling", "collaborative", "onchain", "nft"],
     "heroImageUrl": "https://lore-base.vercel.app/hero.png",
-    "tagline": "Transform meme momentum into canonical IP",
+    "tagline": "Transform memes into IP",
     "ogTitle": "LORE MACHINE",
-    "ogDescription": "Decentralized collaborative lore generator for Base tokens. Submit, vote, and earn rewards as stories become canonical community IP.",
+    "ogDescription": "Decentralized collaborative lore generator for Base tokens. Submit, vote, and earn rewards.",
     "ogImageUrl": "https://lore-base.vercel.app/hero.png",
     "noindex": false
   }
