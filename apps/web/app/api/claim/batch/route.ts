@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify claims belong to user and are unclaimed
-    const validClaims = user.claims.filter((claim) =>
+    const validClaims = user.claims.filter((claim: { id: string }) =>
       claims.some((c: { id: string }) => c.id === claim.id)
     );
 

@@ -18,7 +18,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  authoredLines StoryLine[]
+  authoredLines StoryLine[] @relation("AuthoredLines")
   votes         Vote[]
   claims        Claim[]
   shares        StoryShare[]

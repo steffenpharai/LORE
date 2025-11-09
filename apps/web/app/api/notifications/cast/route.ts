@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthFromRequest } from '@/lib/auth';
-import { NeynarAPIClient } from 'neynar';
-
-const neynarClient = new NeynarAPIClient(process.env.NEYNAR_API_KEY || '');
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,14 +20,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Cast to Farcaster feed
-    const cast = await neynarClient.publishCast(
-      auth.fid.toString(),
-      text,
-      {
-        replyTo: undefined,
-      }
-    );
+    // Cast to Farcaster feed using Neynar API v2
+    const response = await fetch('https://api.neynar.com/v2/farcaster/cast', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.NEYNAR_API_KEY || '',
+      },
+      body: JSON.stringify({
+        signer_uuid: process.env.NEYNAR_SIGNER_UUID, // You'll need to set this
+        text,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Failed to publish cast');
+    }
+
+    const cast = await response.json();
 
     return NextResponse.json({
       cast: {

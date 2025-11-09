@@ -57,7 +57,6 @@ export async function POST(request: NextRequest) {
     if (storyId) {
       story = await prisma.story.findUnique({
         where: { id: storyId },
-        include: { lines: { orderBy: { lineNumber: 'desc' }, take: 1 } },
       });
       if (!story) {
         return NextResponse.json(
@@ -68,7 +67,6 @@ export async function POST(request: NextRequest) {
     } else {
       story = await prisma.story.create({
         data: {},
-        include: { lines: [] },
       });
     }
 
