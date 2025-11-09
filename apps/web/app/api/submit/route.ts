@@ -80,6 +80,9 @@ export async function POST(request: NextRequest) {
 
     // Create line
     const nextLineNumber = story.lineCount + 1;
+    
+    // Check if story should be marked as complete (Phase 5)
+    const willBeComplete = nextLineNumber >= STORY_LINE_CAP;
     const line = await prisma.storyLine.create({
       data: {
         storyId: story.id,
@@ -92,8 +95,35 @@ export async function POST(request: NextRequest) {
     // Update story
     await prisma.story.update({
       where: { id: story.id },
-      data: { lineCount: nextLineNumber },
+      data: { 
+        lineCount: nextLineNumber,
+        isComplete: willBeComplete, // Mark as complete if reached cap
+      },
     });
+
+    // Trigger automatic NFT minting if story is complete (Phase 5)
+    if (willBeComplete) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_URL || (process.env.VERCEL_URL 
+          ? `https://${process.env.VERCEL_URL}` 
+          : 'http://localhost:3000');
+        
+        // Trigger minting asynchronously
+        fetch(`${baseUrl}/api/nft/mint`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': request.headers.get('authorization') || '',
+          },
+          body: JSON.stringify({ storyId: story.id }),
+        }).catch((err) => {
+          console.error('Failed to trigger NFT minting:', err);
+        });
+      } catch (mintError) {
+        console.error('Error triggering NFT minting:', mintError);
+        // Don't fail the submission if minting fails
+      }
+    }
 
     // Update streak tracking (Long-Term Rituals)
     const now = new Date();
@@ -154,6 +184,51 @@ export async function POST(request: NextRequest) {
         submissionCount: 1,
       },
     });
+
+    // Trigger viral exit cast immediately upon submission (Phase 2)
+    // This is the "Identity Play" - high-status cast on submission, not approval
+    try {
+      const author = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { fid: true, username: true },
+      });
+
+      if (author) {
+        const baseUrl = process.env.NEXT_PUBLIC_URL || (process.env.VERCEL_URL 
+          ? `https://${process.env.VERCEL_URL}` 
+          : 'http://localhost:3000');
+        const storyUrl = `${baseUrl}/story/${story.id}`;
+        const ogImageUrl = `${baseUrl}/api/og?storyId=${story.id}&lineId=${line.id}&authorName=${encodeURIComponent(author.username || `user ${author.fid}`)}`;
+        
+        // Get token name from story (if associated) or use default
+        const tokenName = story.tokenName || 'LORE MACHINE';
+        
+        // Format: "I just became the Author of the [Token Name]'s Official Lore!"
+        const castText = `I just became the Author of the ${tokenName}'s Official Lore! 🎉
+
+Check out my contribution: ${storyUrl}
+
+Built on @base 🟦`;
+
+        // Trigger cast asynchronously (don't wait for it)
+        fetch(`${baseUrl}/api/notifications/cast`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: castText,
+            embeds: [{ url: ogImageUrl }],
+            authorFid: author.fid,
+          }),
+        }).catch((err) => {
+          console.error('Failed to trigger viral exit cast:', err);
+        });
+      }
+    } catch (castError) {
+      console.error('Error triggering viral exit cast:', castError);
+      // Don't fail the submission if cast fails
+    }
 
     return NextResponse.json({
       line: {

@@ -38,6 +38,9 @@ model User {
 model Story {
   id          String   @id @default(cuid())
   title       String?
+  tokenName   String?  // Optional token name for token-specific stories (Phase 2)
+  tokenId     String?  // Optional link to Token model (Phase 3)
+  token       Token?   @relation(fields: [tokenId], references: [id])
   lineCount   Int      @default(0)
   totalVotes  Int      @default(0)
   isComplete  Boolean  @default(false)
@@ -49,6 +52,24 @@ model Story {
   shares      StoryShare[]
 
   @@index([isComplete])
+}
+
+model Token {
+  id                  String   @id @default(cuid())
+  address             String   @unique // Token contract address from Clanker deployment
+  clankerTokenId      String?  // Optional Clanker token ID
+  chainId             Int      // Base = 8453, Base Sepolia = 84532
+  liquidityPoolAddress String?
+  name                String
+  symbol              String
+  isActive            Boolean  @default(true)
+  deployedAt          DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  stories             Story[]
+
+  @@index([address, chainId])
 }
 
 model StoryLine {

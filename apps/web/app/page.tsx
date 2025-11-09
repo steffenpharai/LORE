@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSignIn } from "@/hooks/use-sign-in";
+import { useMiniKit } from "@coinbase/onchainkit/minikit";
 import { PenTool, TrendingUp, Users, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -20,6 +21,10 @@ const ComposerModal = dynamic(() => import("@/components/lore/ComposerModal").th
 });
 
 const DailyPrompt = dynamic(() => import("@/components/lore/DailyPrompt").then(mod => ({ default: mod.DailyPrompt })), {
+  ssr: false,
+});
+
+const FrameSubmit = dynamic(() => import("@/components/frame/FrameSubmit").then(mod => ({ default: mod.FrameSubmit })), {
   ssr: false,
 });
 
@@ -55,6 +60,10 @@ export default function Home() {
   });
   const [composerOpen, setComposerOpen] = useState(false);
   const { signIn, isSignedIn, user } = useSignIn({ autoSignIn: true });
+  const { context } = useMiniKit();
+  
+  // Detect if we're in a Frame context
+  const isInFrame = context?.client?.added === true || context?.location?.type === 'cast_embed';
 
   useEffect(() => {
     fetchStories();
@@ -144,6 +153,18 @@ export default function Home() {
 
   const activeStory = useMemo(() => stories[0], [stories]);
   const activeLines = useMemo(() => activeStory?.lines || [], [activeStory]);
+
+  // If in Frame, show simplified Frame-first UI
+  if (isInFrame) {
+    return (
+      <div className="min-h-screen bg-[--background] text-[--foreground] flex items-center justify-center p-4">
+        <FrameSubmit
+          storyId={activeStory?.id}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[--background] text-[--foreground]">

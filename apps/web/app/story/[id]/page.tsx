@@ -64,15 +64,31 @@ export default function StoryPage() {
   };
 
   const handleMint = async () => {
+    if (!story) return;
+    
     setMinting(true);
     try {
-      // In production, this would call the mint API
-      // For now, we'll simulate it
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await fetch("/api/nft/mint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          storyId: story.id,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to mint");
+      }
+
       // Refresh story to get NFT token ID
       await fetchStory();
     } catch (error) {
       console.error("Failed to mint:", error);
+      alert(error instanceof Error ? error.message : "Failed to mint NFT");
     } finally {
       setMinting(false);
     }

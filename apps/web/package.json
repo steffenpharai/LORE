@@ -26,6 +26,7 @@
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.0",
     "lucide-react": "^0.553.0",
+    "merkletreejs": "^0.3.11",
     "next": "^16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
