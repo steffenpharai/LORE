@@ -16,7 +16,7 @@
     "splashBackgroundColor": "#000000",
     "webhookUrl": "https://lore-base.vercel.app/api/webhook",
     "subtitle": "Collaborative Lore Generator",
-    "description": "Transform meme momentum into canonical community IP. Submit one line of lore, vote with LORE points, and earn rewards when your line becomes canon. Stories become fractionalized NFTs on Base.",
+    "description": "Transform meme momentum into canonical IP. Submit one line of lore, vote with LORE points, and earn rewards when your line becomes canon. Stories become NFTs on Base.",
     "screenshotUrls": [
       "https://lore-base.vercel.app/screenshot.png"
     ],
