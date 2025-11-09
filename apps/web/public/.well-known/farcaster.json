@@ -25,7 +25,7 @@
     "heroImageUrl": "https://lore-base.vercel.app/hero.png",
     "tagline": "Transform memes into IP",
     "ogTitle": "LORE MACHINE",
-    "ogDescription": "Decentralized collaborative lore generator for Base tokens. Submit, vote, and earn rewards.",
+    "ogDescription": "Collaborative lore generator for Base. Submit, vote, and earn rewards.",
     "ogImageUrl": "https://lore-base.vercel.app/hero.png",
     "noindex": false
   }
