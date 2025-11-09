@@ -46,6 +46,9 @@ broadcast/
 # TypeScript
 *.tsbuildinfo
 
+# Reference examples (cloned for reference only)
+examples/
+
 # Prisma
 *.db
 *.db-journal

@@ -23,19 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if Neynar API key is configured
-    if (!process.env.NEYNAR_API_KEY) {
-      return NextResponse.json(
-        { error: 'Neynar API key not configured' },
-        { status: 500 }
-      );
-    }
-
     // Cast to Farcaster feed
-    // Note: Free tier has rate limits. For production, consider:
-    // - Using a signer for authenticated casts
-    // - Implementing retry logic with exponential backoff
-    // - Caching to avoid duplicate casts
     const cast = await neynarClient.publishCast(
       auth.fid.toString(),
       text,
@@ -50,27 +38,10 @@ export async function POST(request: NextRequest) {
         text: cast.text,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Cast error:', error);
-    
-    // Handle rate limiting (common on free tier)
-    if (error?.status === 429 || error?.message?.includes('rate limit')) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
-      );
-    }
-    
-    // Handle authentication errors
-    if (error?.status === 401 || error?.status === 403) {
-      return NextResponse.json(
-        { error: 'Neynar API authentication failed. Check your API key.' },
-        { status: 401 }
-      );
-    }
-
     return NextResponse.json(
-      { error: 'Internal server error', details: error?.message },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

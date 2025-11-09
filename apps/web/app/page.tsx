@@ -148,7 +148,7 @@ export default function Home() {
                         {line.content}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        — Line {line.lineNumber} by @{line.author.username || `fid:${line.author.fid}`}
+                        — Line {line.lineNumber} by {line.author.username ? `@${line.author.username}` : `user ${line.author.fid}`}
                       </p>
                     </div>
                   ))}
