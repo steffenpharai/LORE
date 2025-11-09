@@ -1,23 +1,32 @@
 {
   "accountAssociation": {
-    "header": "x-account-association",
-    "signature": "x-account-association-signature"
+    "header": "eyJmaWQiOjEzOTQwNjIsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg1Mjc1MkEyMTA3YzYwNGI4NUM2ZjE3MkMxNEFlQTk3ZjQ1NDAxNTE4In0",
+    "payload": "eyJkb21haW4iOiJsb3JlLWJhc2UudmVyY2VsLmFwcCJ9",
+    "signature": "ZvNAAyEJpN4O3ojTlWd7J9UKiBlTfAyFXq3YH3cJGVkeAl3YW/4zc1ykC1s9MLLqUCJojANptVB2JXA59B/4ABs="
   },
-  "frame": {
-    "version": "next",
-    "imageUrl": "https://loremachine.app/api/og",
-    "button": {
-      "title": "Submit Lore",
-      "action": {
-        "type": "launch_frame",
-        "name": "lore_submit",
-        "url": "https://loremachine.app",
-        "signedIdentityRequest": true
-      }
-    }
+  "baseBuilder": {
+    "ownerAddress": "0x7897ee83FE2281d8780483A6E7bFD251d3152cF7"
   },
-  "webhook": {
-    "url": "https://loremachine.app/api/webhooks/farcaster"
+  "miniapp": {
+    "version": "1",
+    "name": "LORE MACHINE",
+    "homeUrl": "https://lore-base.vercel.app",
+    "iconUrl": "https://lore-base.vercel.app/icon.png",
+    "splashImageUrl": "https://lore-base.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "webhookUrl": "https://lore-base.vercel.app/api/webhook",
+    "subtitle": "Decentralized Collaborative Lore Generator",
+    "description": "Transform meme momentum into canonical community IP. Submit one line of lore, vote with $LORE points, and earn rewards when your line becomes canon. Stories become fractionalized NFTs on Base.",
+    "screenshotUrls": [
+      "https://lore-base.vercel.app/screenshot.png"
+    ],
+    "primaryCategory": "social",
+    "tags": ["social", "storytelling", "collaborative", "onchain", "nft", "base"],
+    "heroImageUrl": "https://lore-base.vercel.app/hero.png",
+    "tagline": "Transform meme momentum into canonical IP",
+    "ogTitle": "LORE MACHINE",
+    "ogDescription": "Decentralized collaborative lore generator for Base tokens. Submit, vote, and earn rewards as stories become canonical community IP.",
+    "ogImageUrl": "https://lore-base.vercel.app/hero.png",
+    "noindex": false
   }
 }
-

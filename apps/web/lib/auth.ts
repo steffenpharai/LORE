@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
-const JWT_DOMAIN = process.env.JWT_DOMAIN || 'loremachine.app';
+const JWT_DOMAIN = process.env.JWT_DOMAIN || 'lore-base.vercel.app';
 
 const AuthPayloadSchema = z.object({
   fid: z.number(),
