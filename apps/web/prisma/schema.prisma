@@ -7,7 +7,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Use POSTGRES_PRISMA_URL for Supabase (with pgbouncer connection pooling)
+  // If you prefer DATABASE_URL, set it in your .env.local to the same value
+  url      = env("POSTGRES_PRISMA_URL")
 }
 
 model User {

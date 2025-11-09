@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { NextRequest } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 const JWT_DOMAIN = process.env.JWT_DOMAIN || 'lore-base.vercel.app';
@@ -33,12 +34,23 @@ export function createToken(fid: number, username?: string): string {
   );
 }
 
-export function getAuthFromRequest(request: Request): AuthPayload | null {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
+export function getAuthFromRequest(request: Request | NextRequest): AuthPayload | null {
+  // First, try to get token from cookie (for NextRequest)
+  if ('cookies' in request) {
+    const cookieToken = (request as NextRequest).cookies.get('auth_token')?.value;
+    if (cookieToken) {
+      const payload = verifyToken(cookieToken);
+      if (payload) return payload;
+    }
   }
-  const token = authHeader.substring(7);
-  return verifyToken(token);
+
+  // Fall back to Authorization header
+  const authHeader = request.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    return verifyToken(token);
+  }
+
+  return null;
 }
 

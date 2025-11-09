@@ -12,7 +12,8 @@ export default async function middleware(req: NextRequest) {
     req.nextUrl.pathname.includes('/api/og') ||
     req.nextUrl.pathname.includes('/api/webhook') ||
     req.nextUrl.pathname === '/api/stories' ||
-    req.nextUrl.pathname === '/api/notification'
+    req.nextUrl.pathname === '/api/notification' ||
+    req.nextUrl.pathname === '/api/rituals/daily-prompt'
   ) {
     return NextResponse.next();
   }

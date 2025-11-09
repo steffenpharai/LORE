@@ -59,10 +59,11 @@ export default function Home() {
     totalContributors: 0,
   });
   const [composerOpen, setComposerOpen] = useState(false);
-  const { signIn, isSignedIn, user } = useSignIn({ autoSignIn: true });
+  const [error, setError] = useState<string | null>(null);
+  const { signIn, isSignedIn, user, isLoading: isSigningIn } = useSignIn({ autoSignIn: true });
   const { context } = useMiniKit();
   
-  // Detect if we're in a Frame context
+  // Detect if we're in a Frame context - handle undefined context gracefully
   const isInFrame = context?.client?.added === true || context?.location?.type === 'cast_embed';
 
   useEffect(() => {
@@ -79,10 +80,21 @@ export default function Home() {
   const fetchStories = async () => {
     try {
       const res = await fetch("/api/stories?limit=1");
+      if (!res.ok) {
+        // If it's a server error, still try to parse the response
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Failed to fetch stories:", errorData);
+        setError(errorData.error || "Failed to load stories");
+        setStories([]); // Set empty array to prevent UI breakage
+        return;
+      }
       const data = await res.json();
       setStories(data.stories || []);
+      setError(null); // Clear any previous errors
     } catch (error) {
       console.error("Failed to fetch stories:", error);
+      setError("Network error. Please check your connection.");
+      setStories([]); // Set empty array to prevent UI breakage
     } finally {
       setLoading(false);
     }
@@ -91,6 +103,11 @@ export default function Home() {
   const fetchStats = async () => {
     try {
       const res = await fetch("/api/stories?limit=100");
+      if (!res.ok) {
+        // Don't set error for stats - just use default values
+        console.error("Failed to fetch stats:", res.status);
+        return;
+      }
       const data = await res.json();
       const allStories = data.stories || [];
       const contributors = new Set<number>();
@@ -98,8 +115,10 @@ export default function Home() {
 
       allStories.forEach((story: Story) => {
         totalLines += story.lineCount;
-        story.lines.forEach((line) => {
-          contributors.add(line.author.fid);
+        story.lines?.forEach((line) => {
+          if (line?.author?.fid) {
+            contributors.add(line.author.fid);
+          }
         });
       });
 
@@ -109,6 +128,7 @@ export default function Home() {
         totalContributors: contributors.size,
       });
     } catch (error) {
+      // Don't set error for stats - just log and continue
       console.error("Failed to fetch stats:", error);
     }
   };
@@ -143,19 +163,30 @@ export default function Home() {
     }
   }, [isSignedIn]);
 
-  const handleAddLine = useCallback(() => {
+  const handleAddLine = useCallback(async () => {
     if (!isSignedIn) {
-      signIn();
+      try {
+        await signIn();
+        // If sign-in succeeds, open composer
+        if (isSignedIn || user) {
+          setComposerOpen(true);
+        }
+      } catch (error) {
+        // Sign-in failed - show error or handle gracefully
+        console.error("Sign in failed:", error);
+        setError("Please sign in to add a line. Make sure you're using the Base Mini App.");
+      }
       return;
     }
     setComposerOpen(true);
-  }, [isSignedIn, signIn]);
+  }, [isSignedIn, signIn, user]);
 
   const activeStory = useMemo(() => stories[0], [stories]);
   const activeLines = useMemo(() => activeStory?.lines || [], [activeStory]);
 
   // If in Frame, show simplified Frame-first UI
-  if (isInFrame) {
+  // Only show if context is actually available
+  if (isInFrame && context) {
     return (
       <div className="min-h-screen bg-[--background] text-[--foreground] flex items-center justify-center p-4">
         <FrameSubmit
@@ -236,7 +267,7 @@ export default function Home() {
                 <span className="text-sm font-medium">Active Stories</span>
               </div>
               <div className="text-3xl font-bold text-white font-[--font-space-grotesk]">
-                {stats.totalStories}
+                {loading ? "..." : stats.totalStories}
               </div>
             </motion.div>
             <motion.div
@@ -250,7 +281,7 @@ export default function Home() {
                 <span className="text-sm font-medium">Total Lines</span>
               </div>
               <div className="text-3xl font-bold text-white font-[--font-space-grotesk]">
-                {stats.totalLines}
+                {loading ? "..." : stats.totalLines}
               </div>
             </motion.div>
             <motion.div
@@ -264,7 +295,7 @@ export default function Home() {
                 <span className="text-sm font-medium">Contributors</span>
               </div>
               <div className="text-3xl font-bold text-white font-[--font-space-grotesk]">
-                {stats.totalContributors}
+                {loading ? "..." : stats.totalContributors}
               </div>
             </motion.div>
           </div>
@@ -298,6 +329,13 @@ export default function Home() {
             )}
           </div>
 
+          {error && (
+            <Card className="border-yellow-500/50 bg-yellow-500/10">
+              <CardContent className="p-4">
+                <p className="text-sm text-yellow-400">{error}</p>
+              </CardContent>
+            </Card>
+          )}
           {loading ? (
             <Card>
               <CardContent className="p-12 text-center">
@@ -316,9 +354,14 @@ export default function Home() {
                 <p className="text-xl text-[--gray-400]">
                   No stories yet. Be the first to create one!
                 </p>
-                <Button onClick={handleAddLine} variant="glow" className="mt-4">
+                <Button 
+                  onClick={handleAddLine} 
+                  variant="glow" 
+                  className="mt-4"
+                  disabled={isSigningIn}
+                >
                   <PenTool className="mr-2 h-4 w-4" />
-                  Start the First Story
+                  {isSigningIn ? "Signing in..." : "Start the First Story"}
                 </Button>
               </CardContent>
             </Card>

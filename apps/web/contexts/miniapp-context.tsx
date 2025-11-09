@@ -23,6 +23,11 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
 
   const handleAddFrame = useCallback(async () => {
     try {
+      if (!addFrame) {
+        console.debug('addFrame function not available');
+        return null;
+      }
+
       const result = await addFrame();
       // Handle case where result might be undefined or have different structure
       if (result && typeof result === 'object') {
@@ -32,15 +37,16 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
         }
         // Handle case where result might be wrapped in a result property
         const resultObj = result as Record<string, unknown>;
-        if ('result' in resultObj && resultObj.result && typeof resultObj.result === 'object') {
+        if (resultObj && 'result' in resultObj && resultObj.result && typeof resultObj.result === 'object') {
           const innerResult = resultObj.result as Record<string, unknown>;
-          if ('url' in innerResult && 'token' in innerResult) {
+          if (innerResult && 'url' in innerResult && 'token' in innerResult) {
             return innerResult as { url: string; token: string };
           }
         }
       }
       return null;
     } catch (error) {
+      // Log error but don't throw - frame addition is optional
       console.error('[error] adding frame', error);
       // Don't throw, just return null to prevent breaking the app
       return null;

@@ -36,9 +36,14 @@ export const useSignIn = ({ autoSignIn = false }: { autoSignIn?: boolean }) => {
       setIsLoading(true);
       setError(null);
 
-      if (!context) {
-        throw new Error('No context found');
+      // Gracefully handle missing context - don't throw, just return early
+      if (!context || !context.user) {
+        console.warn('No Base Mini App context available. Sign in requires Base Mini App context.');
+        setError('Sign in requires Base Mini App context');
+        setIsLoading(false);
+        return null;
       }
+
       let referrerFid: number | null = null;
       const result = await signIn({
         nonce: Math.random().toString(36).substring(2),
@@ -98,7 +103,9 @@ export const useSignIn = ({ autoSignIn = false }: { autoSignIn?: boolean }) => {
       const errorMessage =
         err instanceof Error ? err.message : 'Sign in failed';
       setError(errorMessage);
-      throw err;
+      // Don't throw in production - just log and return null
+      console.error('Sign in error:', err);
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -106,10 +113,14 @@ export const useSignIn = ({ autoSignIn = false }: { autoSignIn?: boolean }) => {
 
   useEffect(() => {
     // if autoSignIn is true, sign in automatically on mount
-    if (autoSignIn) {
-      handleSignIn();
+    // Only attempt if context is available
+    if (autoSignIn && context?.user) {
+      handleSignIn().catch((err) => {
+        // Silently handle errors to prevent unhandled promise rejections
+        console.debug('Auto sign-in failed:', err);
+      });
     }
-  }, [autoSignIn, handleSignIn]);
+  }, [autoSignIn, handleSignIn, context]);
 
   // Return Base app user data directly from context when available
   const effectiveUser = baseUser ? {

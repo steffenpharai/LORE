@@ -11,7 +11,7 @@
     "version": "1",
     "name": "LORE MACHINE",
     "homeUrl": "https://lore-base.vercel.app",
-    "iconUrl": "https://lore-base.vercel.app/icon.png",
+    "iconUrl": "https://lore-base.vercel.app/icon.svg",
     "splashImageUrl": "https://lore-base.vercel.app/splash.png",
     "splashBackgroundColor": "#000000",
     "webhookUrl": "https://lore-base.vercel.app/api/webhook",

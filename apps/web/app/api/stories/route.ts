@@ -59,8 +59,24 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ stories: storiesWithContributors });
   } catch (error) {
     console.error('Stories error:', error);
+    
+    // Check if it's a database connection error
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isConnectionError = 
+      errorMessage.includes('P1001') || // Can't reach database server
+      errorMessage.includes('P1017') || // Server has closed the connection
+      errorMessage.includes('connect') ||
+      errorMessage.includes('ECONNREFUSED') ||
+      errorMessage.includes('timeout');
+
+    if (isConnectionError) {
+      // Return empty array instead of error to prevent UI breakage
+      console.warn('Database connection error, returning empty stories array');
+      return NextResponse.json({ stories: [] });
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: process.env.NODE_ENV === 'development' ? errorMessage : undefined },
       { status: 500 }
     );
   }
