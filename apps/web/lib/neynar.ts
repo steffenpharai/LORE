@@ -1,5 +1,5 @@
 export interface NeynarUser {
-  fid: string | number;
+  fid: string;
   username: string;
   display_name: string;
   pfp_url: string;
@@ -11,7 +11,7 @@ export interface NeynarUser {
  * Fetch user data from Neynar API
  * Matches the pattern from Base MiniKit starter
  */
-export const fetchUser = async (fid: string | number): Promise<NeynarUser> => {
+export const fetchUser = async (fid: string): Promise<NeynarUser> => {
   const response = await fetch(
     `https://api.neynar.com/v2/farcaster/user/bulk?fids=${fid}`,
     {

@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
 
     // Try Farcaster signature verification first (OnchainKit pattern)
     if (fid && signature && message) {
-      const user = await verifyFarcasterSignature(fid, signature, message);
+      const user = await verifyFarcasterSignature(String(fid), signature, message);
       if (user) {
-        verifiedFid = typeof user.fid === 'string' ? parseInt(user.fid) : user.fid;
+        verifiedFid = parseInt(user.fid);
         username = user.username;
         walletAddress = user.custody_address;
       } else {

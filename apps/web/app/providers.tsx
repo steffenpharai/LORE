@@ -15,7 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <MiniKitProvider
         projectId={projectId}
-        notificationProxyUrl="/api/notifications"
+        notificationProxyUrl="/api/notification"
         chain={chain}
       >
         <MiniAppProvider>{children}</MiniAppProvider>

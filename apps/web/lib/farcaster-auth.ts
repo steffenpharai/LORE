@@ -6,7 +6,7 @@ import { fetchUser, type NeynarUser } from './neynar';
  * This matches the Base MiniKit starter implementation
  */
 export async function verifyFarcasterSignature(
-  fid: string | number,
+  fid: string,
   signature: string,
   message: string
 ): Promise<NeynarUser | null> {
