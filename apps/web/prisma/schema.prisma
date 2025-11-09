@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  fid       Int      @unique
+  username  String?
+  lorePoints Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authoredLines StoryLine[]
+  votes         Vote[]
+  claims        Claim[]
+  shares        StoryShare[]
+
+  @@index([fid])
+}
+
+model Story {
+  id          String   @id @default(cuid())
+  title       String?
+  lineCount   Int      @default(0)
+  totalVotes  Int      @default(0)
+  isComplete  Boolean  @default(false)
+  nftTokenId  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lines       StoryLine[]
+  shares      StoryShare[]
+
+  @@index([isComplete])
+}
+
+model StoryLine {
+  id          String   @id @default(cuid())
+  storyId     String
+  story       Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation("AuthoredLines", fields: [authorId], references: [id])
+  content     String
+  lineNumber  Int
+  voteCount   Int      @default(0)
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  votes       Vote[]
+
+  @@unique([storyId, lineNumber])
+  @@index([storyId, isApproved])
+}
+
+model Vote {
+  id          String   @id @default(cuid())
+  voterId     String
+  voter       User     @relation(fields: [voterId], references: [id])
+  lineId      String
+  line        StoryLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  amount      Int      // LORE points
+  createdAt   DateTime @default(now())
+
+  @@unique([voterId, lineId])
+  @@index([lineId])
+}
+
+model Claim {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Int
+  merkleRoot  String?
+  proof       String[] // JSON array
+  isClaimed   Boolean  @default(false)
+  txHash      String?
+  createdAt   DateTime @default(now())
+  claimedAt   DateTime?
+
+  @@index([userId, isClaimed])
+}
+
+model StoryShare {
+  id          String   @id @default(cuid())
+  storyId     String
+  story       Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  shareAmount Int      // ERC-1155 token amount
+  tokenId     Int?     // ERC-1155 token ID
+  createdAt   DateTime @default(now())
+
+  @@unique([storyId, userId])
+  @@index([storyId])
+}
+

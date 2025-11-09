@@ -1,0 +1,21 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "BASE_ENV": "@base_env",
+    "DATABASE_URL": "@database_url",
+    "REDIS_URL": "@redis_url",
+    "NEYNAR_API_KEY": "@neynar_api_key",
+    "BASE_PAYMASTER_URL": "@base_paymaster_url",
+    "ALCHEMY_BASE_RPC": "@alchemy_base_rpc",
+    "JWT_DOMAIN": "@jwt_domain",
+    "JWT_SECRET": "@jwt_secret",
+    "STORY_LINE_CAP": "@story_line_cap",
+    "VOTE_THRESHOLD": "@vote_threshold",
+    "MAX_LINES_PER_DAY_PER_FID": "@max_lines_per_day_per_fid"
+  }
+}
+

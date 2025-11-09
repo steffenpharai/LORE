@@ -1,0 +1,23 @@
+{
+  "accountAssociation": {
+    "header": "x-account-association",
+    "signature": "x-account-association-signature"
+  },
+  "frame": {
+    "version": "next",
+    "imageUrl": "https://loremachine.app/api/og",
+    "button": {
+      "title": "Submit Lore",
+      "action": {
+        "type": "launch_frame",
+        "name": "lore_submit",
+        "url": "https://loremachine.app",
+        "signedIdentityRequest": true
+      }
+    }
+  },
+  "webhook": {
+    "url": "https://loremachine.app/api/webhooks/farcaster"
+  }
+}
+
